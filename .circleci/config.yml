@@ -16,9 +16,9 @@ jobs:
 
       # build and push Docker image
       - run: |
-          docker build -t CircleCI-Public/circleci-demo-docker:latest .
+          docker build -t $DOCKER_LOGIN/circleci-node:latest .
           echo $Docker_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-          docker push CircleCI-Public/circleci-demo-docker:latest
+          docker push $DOCKER_LOGIN/circleci-node:latest
 # version: 2.1
 
 # workflows:
