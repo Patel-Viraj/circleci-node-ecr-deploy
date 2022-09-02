@@ -1,0 +1,22 @@
+version: 2.1
+
+workflows:
+  test-deploy:
+    jobs:
+       - test                   
+
+jobs:
+  test:
+    docker:
+      - image: cimg/node:14.13.0
+    steps:
+      - checkout
+      - run: 
+          name: Install dependences
+          command: scp -r -o StrictHostKeyChecking=no * ubuntu@54.83.108.237:/home/ubuntu/ 
+      - run: |
+            ssh -o StrictHostKeyChecking=no ubuntu@54.83.108.237 \
+            npm i      
+      - run: |
+            ssh -o StrictHostKeyChecking=no ubuntu@54.83.108.237 \
+            pm2 restart app.js
