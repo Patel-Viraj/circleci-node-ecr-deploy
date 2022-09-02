@@ -3,23 +3,39 @@ version: 2.1
 workflows:
   test-deploy:
     jobs:
-      - docker_hub_build_push_image:
+      - build:
       - aws-ecr/build_and_push_image:
           region: us-east-1
           account-url: ${AWS_ECR_ACCOUNT_URL}
           repo: ${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_BUILD_NUM}
-
-            
   jobs:
-    docker_hub_build_push_image:
-      machine:
-        - image: ubuntu-2204:2022.04.2
-      steps:
-        - checkout
-        - run: 
-            name: Build and push Docker image to ECR
-            command: |
-               docker build -t ${DOCKER_LOGIN}/node-app:${TAG} .
-               docker login -u ${DOCKER_LOGIN} -p ${Docker_PWD}
-               docker push ${DOCKER_LOGIN}/node-app       
+   build:
+     machine:
+      image: ubuntu-2204:2022.04.2
+     steps:
+       - checkout
+       # start proprietary DB using private Docker image
+       # with credentials stored in the UI
+       - run: |
+           echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+           docker run -d --name db company/proprietary-db:1.2.3
+
+       # build the application image
+       - run: docker build -t company/app:$CIRCLE_BRANCH .
+
+       # deploy the image
+       - run: docker push company/app:$CIRCLE_BRANCH
+            
+#   jobs:
+#     docker_hub_build_push_image:
+#       machine:
+#         - image: ubuntu-2204:2022.04.2
+#       steps:
+#         - checkout
+#         - run: 
+#             name: Build and push Docker image to ECR
+#             command: |
+#                docker build -t ${DOCKER_LOGIN}/node-app:${TAG} .
+#                docker login -u ${DOCKER_LOGIN} -p ${Docker_PWD}
+#                docker push ${DOCKER_LOGIN}/node-app       
