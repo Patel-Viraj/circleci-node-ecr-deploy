@@ -3,20 +3,26 @@ version: 2.1
 workflows:
   test-deploy:
     jobs:
-       - test                   
+       - docker_hub_build_push_image:
+      - aws-ecr/build_and_push_image:
+          region: us-east-1
+          account-url: ${AWS_ECR_ACCOUNT_URL}
+          repo: ${CIRCLE_PROJECT_REPONAME}
+          tag: ${CIRCLE_BUILD_NUM}
 
-jobs:
-  test:
-    docker:
-      - image: cimg/node:14.13.0
-    steps:
-      - checkout
-      - run: 
-          name: Install dependences
-          command: scp -r -o StrictHostKeyChecking=no * ubuntu@54.83.108.237:/home/ubuntu/ 
-      - run: |
-            ssh -o StrictHostKeyChecking=no ubuntu@54.83.108.237 \
-            npm i      
-      - run: |
-            ssh -o StrictHostKeyChecking=no ubuntu@54.83.108.237 \
-            pm2 restart app.js
+            
+  jobs:
+    docker_hub_build_push_image:
+      docker:
+        - image: circleci/python:2.7.14
+      steps:
+        - checkout
+        - run: 
+            name: Build and push Docker image to ECR
+            command: |
+            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> ${BASH_ENV}
+            echo 'export IMAGE_NAME=${CIRCLE_PROJECT_REPONAME}' >> ${BASH_ENV}
+            source ${BASH_ENV}
+            docker build -t ${DOCKER_LOGIN}/${IMAGE_NAME} -t ${DOCKER_LOGIN}/${IMAGE_NAME}:${TAG} .
+            echo ${DOCKER_PWD} | docker login -u ${DOCKER_LOGIN} --password-stdin
+            docker push ${DOCKER_LOGIN}/${IMAGE_NAME}        
