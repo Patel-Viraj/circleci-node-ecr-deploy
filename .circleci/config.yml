@@ -18,9 +18,8 @@ jobs:
       - run: |
           docker build -t $DOCKER_LOGIN/circleci-node:latest .
           echo $Docker_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-          docker push $DOCKER_LOGIN/circleci-node:latest
-          
-jobs:
+          docker push $DOCKER_LOGIN/circleci-node:latest          
+
   aws-cli-cred-setup:
     executor: aws-cli/default
     steps:
@@ -29,7 +28,6 @@ jobs:
           aws-secret-access-key: AWS_ACCESS_SECRET
           aws-region: AWS_REGION_NAME          
           
-jobs:
   image-update-ecs:
     executor: aws-cli/default
     steps:
@@ -42,3 +40,4 @@ workflows:
       - build:
       - aws-cli-cred-setup:
           context: aws
+      - image-update-ecs:    
