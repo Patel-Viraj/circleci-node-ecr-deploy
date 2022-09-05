@@ -37,7 +37,7 @@ jobs:
 workflows:
   aws-cli:
     jobs:
-      - build:
+      - build
       - aws-cli-cred-setup:
           context: aws
-      - image-update-ecs:    
+      - image-update-ecs    
