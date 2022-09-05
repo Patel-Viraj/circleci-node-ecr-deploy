@@ -9,25 +9,25 @@ jobs:
           username: viraj5132
           password: $Docker_PWD # context / project UI env-var reference
     steps:
-#       - checkout
-#       # ... steps for building/testing app ...
+      - checkout
+      # ... steps for building/testing app ...
 
-#       - setup_remote_docker:
-#           version: 20.10.14
-#           docker_layer_caching: true
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
 
-#       # build and push Docker image
-#       - run: |
-#           docker build -t $DOCKER_LOGIN/circleci-node:latest .
-#           echo $Docker_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-#           docker push $DOCKER_LOGIN/circleci-node:latest       
-        - aws-cli/setup:
-            aws-access-key-id: AWS_ACCESS_KEY
-            aws-secret-access-key: AWS_ACCESS_SECRET
-            aws-region: AWS_REGION_NAME
+      # build and push Docker image
+      - run: |
+          docker build -t $DOCKER_LOGIN/circleci-node:latest .
+          echo $Docker_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+          docker push $DOCKER_LOGIN/circleci-node:latest       
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
             
-        - run: |
-             aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])     
+      - run: |
+           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])     
 
 #   aws-cli-cred-setup:
 #     executor: aws-cli/default
