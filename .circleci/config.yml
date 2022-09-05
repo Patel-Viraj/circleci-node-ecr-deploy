@@ -31,24 +31,3 @@ jobs:
       - run: |     
            aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])
 
-#   aws-cli-cred-setup:
-#     executor: aws-cli/default
-#     steps:
-#       - aws-cli/setup:
-#           aws-access-key-id: AWS_ACCESS_KEY
-#           aws-secret-access-key: AWS_ACCESS_SECRET
-#           aws-region: AWS_REGION_NAME          
-          
-#   image-update-ecs:
-#     executor: aws-cli/default
-#     steps:
-#       - run: |
-#           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])  
-          
-# workflows:
-#   aws-cli:
-#     jobs:
-#       - aws-cli-cred-setup:
-#           context: aws
-#       - build    
-#       - image-update-ecs    
