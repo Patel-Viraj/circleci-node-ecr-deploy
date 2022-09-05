@@ -27,7 +27,8 @@ jobs:
           aws-region: AWS_REGION_NAME
             
       - run: |
-           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])     
+           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])  \
+           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])
 
 #   aws-cli-cred-setup:
 #     executor: aws-cli/default
