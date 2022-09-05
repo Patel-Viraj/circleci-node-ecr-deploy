@@ -36,10 +36,10 @@ jobs:
       - run: |
           aws ecs stop-task --cluster circle-ci --task $(aws ecs list-tasks --cluster circle-ci --service circle-svc --output text --query taskArns[0])  
           
-workflows:
-  aws-cli:
-    jobs:
-      - aws-cli-cred-setup:
-          context: aws
+# workflows:
+#   aws-cli:
+#     jobs:
+#       - aws-cli-cred-setup:
+#           context: aws
 #       - build    
-      - image-update-ecs    
+#       - image-update-ecs    
